@@ -73,7 +73,7 @@ class PLP_Test
 			colorText[] = {1,1,1,1};
 			text = "#(rgb,1,1,1)color(0.5,0,0,1,ca)";
 			
-			
+			allowExternalURL = 1; // This makes it require manual approval by user
 			url = "https://www.youtube.com/watch?v=k8Jtm1eNpeU";
 		
 		};

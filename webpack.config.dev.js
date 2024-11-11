@@ -118,4 +118,4 @@ var configHTML = Object.assign({}, configCommon, {
     watch: true
 });
 
-module.exports = [/*configJS,*/ configHTML/*, configJSA3API*/];
+module.exports = [/*configJS,*/ configHTML, configJSA3API];

@@ -1,5 +1,5 @@
 export class A3API {
-    private static pendingRequests: {[key:string]: any} = {};
+    private static pendingRequests: {[key:string]: Array<any>} = {};
 
     static _response(key: string, content: string)
     {
@@ -24,7 +24,8 @@ export class A3API {
         waiterList.push({resolve, reject});
   
         // Send request to Arma. __ prefix is reserved
-        alert(`__A3TexReq;${texturePath};${maxSize}`);
+        if (waiterList.length == 1) // Only if new request, and not already queued
+          alert(`__A3TexReq;${texturePath};${maxSize}`);
       });
     }
   
@@ -39,7 +40,8 @@ export class A3API {
         waiterList.push({resolve, reject});
   
         // Send request to Arma. __ prefix is reserved
-        alert(`__A3FileReq;${filePath}`);
+        if (waiterList.length == 1) // Only if new request, and not already queued
+          alert(`__A3FileReq;${filePath}`);
       });
     }
   
@@ -54,7 +56,8 @@ export class A3API {
         waiterList.push({resolve, reject});
   
         // Send request to Arma. __ prefix is reserved
-        alert(`__A3FilePReq;${filePath}`);
+        if (waiterList.length == 1) // Only if new request, and not already queued
+          alert(`__A3FilePReq;${filePath}`);
       });
     }
 

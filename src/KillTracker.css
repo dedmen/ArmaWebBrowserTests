@@ -1,8 +1,8 @@
 
 @keyframes anim_pop-in {
     0% { opacity: 0; transform: scale(0.1); }
-    50% { opacity: 1; transform: scale(2); }
-    100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 1; transform: scale(2) rotate(90deg) translate3d(-600px, 0, 0);  }
+    100% { opacity: 1; transform: scale(1) rotate(0deg) translate3d(0, 0, 0); }
 }
 
 #app {
@@ -17,9 +17,8 @@
     align-items: baseline;
 }
 
-
 .killTrackerRow {
-    animation:anim_pop-in 0.5s;
+    animation:anim_pop-in 0.8s;
     height: 50px;
 
     display: flex;
@@ -28,11 +27,13 @@
 
     img {
         flex-grow: 0.2;
-        max-height: 50px;
+        max-height: 30px;
     }
 
     span {
-        font-size: 50px;
+        font-size: 30px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 
