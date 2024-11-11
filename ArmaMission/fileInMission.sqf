@@ -1,0 +1,1 @@
+diag_log [__DATE_STR_ISO8601__];

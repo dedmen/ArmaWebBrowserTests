@@ -1,0 +1,293 @@
+<html>
+<head>
+
+<style>
+$cream: #FEDCCA;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: #EB4F5C;
+}
+
+.rock {
+  font-size: 200px;
+  margin: 0;
+  color: #D4304B;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hand {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  animation: rockit .8s ease infinite alternate;
+}
+
+.palm {
+  width: 125px;
+  height: 140px;
+  background: $cream;
+  transform: rotate(26deg);
+  box-shadow: inset 0 0 50px #E77F7B;
+  
+  &:after {
+    content: '';
+    background: #F2ADA1;
+    width: 20px;
+    height: 30px;
+    border-radius: 0 0 0 100% / 50%;
+    position: absolute;
+    left: -20px;
+    bottom: 25px;
+    z-index: 5;
+  }
+  
+  &:before {
+    content: '';
+    background-image: linear-gradient(-180deg, #E56C4C 0, #F68E60 100%);
+    width: 100%;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    bottom: -15px;
+  }
+}
+
+.mobile {
+  width: 260px;
+  height: 135px;
+  background: #FC617E;
+  border: 4px solid #705674;
+  border-width: 4px 10px 4px 10px;
+  border-radius: 20px;
+  position: absolute;
+  top: -80px;
+  left: 80%;
+  transform: rotate(-5deg) translatex(-50%);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.screensaver {
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 
+    0 0 0 30px #eee,
+    0 0 0 50px #D36868,
+    0 0 0 70px #71D368,
+    0 0 0 100px #68CFD3;
+  animation: screensaver .5s linear infinite;
+}
+
+.mobile-shadow {
+  width: 100px;
+  height: 50px;
+  background: #C7656C;
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: rotate(-5deg) translatex(-40%);
+  filter: blur(10px);
+}
+
+.finger {
+  position: absolute;
+  width: 45px;
+  background: $cream;
+  border-radius: 22px;
+  box-shadow: inset 11px -17px 40px #E77F7B;
+}
+
+.finger-shadow {
+  width: 35px;
+  height: 50px;
+  background: #C7656C;
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translatex(-50%);
+  filter: blur(10px);
+}
+
+.finger-5 {
+  height: 115px;
+  top: -130px;
+  left: -15px;
+  transform: rotate(2deg);
+}
+
+.finger-4 {
+  height: 90px;
+  top: -100px;
+  left: 30px;
+  transform: rotate(-8deg);
+  z-index: 1;
+}
+
+.finger-3 {
+  height: 105px;
+  top: -105px;
+  left: 75px;
+  transform: rotate(-8deg);
+  z-index: 1;
+}
+
+.finger-2 {
+  height: 120px;
+  top: -165px;
+  left: 120px;
+  transform: rotate(15deg);
+  
+  .finger-shadow {
+    bottom: -5px;
+  }
+}
+
+.finger-1 {
+  height: 100px;
+  top: -10px;
+  right: -50px;
+  transform: rotate(-65deg);
+  z-index: 1;
+  
+  .fingernail {
+    top: 10px;
+    bottom: auto;
+    transform: translatex(-50%) scale(-1);
+  }
+}
+
+.thumb-base {
+  background-image: linear-gradient(-125deg, #E97E79 42%, #FDD8C7 77%);
+  width: 42px;
+  height: 85px;
+  border-radius: 17px 20px 0 79px;
+  position: absolute;
+  top: 26px;
+  right: -51px;
+  transform: rotate(50deg);
+}
+
+.bone {
+  width: 30px;
+  height: 50px;
+  border-radius: 50% 50% 0 0 / 20% 20% 0 0;
+  background: #F5E5E9;
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  z-index: 1;
+  transform: translatex(-50%);
+  
+  &:after,
+  &:before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #F5E5E9;
+    box-shadow: inset 0 -5px 5px #ECD6DA;
+    position: absolute;
+    bottom: -20px;
+  }
+
+  &:after {
+    left: -20px;
+  }
+
+  &:before {
+    right: -20px;
+  }
+}
+
+.fingernail {  
+  width: 30px;
+  height: 25px;
+  background: rgba(#FDFDFD, .3);
+  box-shadow: 1px 1px #E5BAA7;
+  border-radius: 0 0 50% 50%;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translatex(-50%);
+}
+
+.palm-shadow {
+  width: 20px;
+  height: 70px;
+  background: #C7656C;
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translatex(-50%);
+  filter: blur(10px);
+}
+
+@keyframes rockit {
+  from { transform: translatey(30px) rotate(-45deg); }
+  to { transform: translatey(30px) rotate(10deg); }
+}
+
+@keyframes screensaver {
+  to {
+    box-shadow: 
+      0 0 0 80px #eee,
+      0 0 0 120px #D36868,
+      0 0 0 200px #71D368,
+      0 0 0 250px #68CFD3;
+  }
+}
+</style>
+
+
+</head>
+<body>
+
+<p class="rock">ROCK</p>
+<div class="hand">
+  <div class="palm">
+    <div class="bone"></div>
+    <div class="palm-shadow"></div>
+  </div>
+  <div class="thumb-base"></div>
+  <div class="mobile-shadow"></div>
+  <div class="mobile">
+    <div class="screensaver"></div>
+  </div>
+  <div class="finger-5 finger">
+    <div class="finger-shadow"></div>
+  </div>
+  <div class="finger-4 finger">
+    <div class="fingernail"></div>
+  </div>
+  <div class="finger-3 finger">
+    <div class="fingernail"></div>
+  </div>
+  <div class="finger-2 finger">
+    <div class="finger-shadow"></div>
+  </div>
+  <div class="finger-1 finger">
+    <div class="fingernail"></div>
+  </div>
+</div>
+
+</body>
+</html>

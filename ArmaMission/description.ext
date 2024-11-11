@@ -1,0 +1,114 @@
+import RscText;
+import RscTitle;
+import RscLine;
+import RscVideo;
+import RscPicture;
+
+class CfgCommands 
+{
+	allowedHTMLLoadURIs[] =
+	{
+		"*.youtube.com",
+		"*wolfcorps.de",
+		"*twitch.tv"
+	};
+}
+
+
+
+class RscDisplayRenderTest
+{
+	idd=157;
+	class Controls
+	{
+		class Background1: RscText
+		{
+			x=0;
+			y=0;
+			w=1;
+			h=1;
+			colorBackground[]={0,1,0,0.4};
+		};
+		class Background2: RscText
+		{
+			x=0.1;
+			y=0.1;
+			w=0.8;
+			h=0.8;
+			colorBackground[]={0,0,1,0.4};
+		};
+		
+		class VideoTest: RscText
+		{
+		type=106;
+			idc=1337;
+			x="0";
+			y="0";
+			w="1";
+			h="1";
+			
+			url = "https://www.youtube.com/watch?v=xvFZjo5PgG0&autoplay=1&loop=1";
+		};
+		
+	};
+	
+	onLoad = "GMyData = _this, uiNamespace setVariable ['GMyData', _this]; addMissionEventHandler ['EachFrame', {_disp = _thisArgs#0; displayUpdate _disp;}, [_this#0]];";
+};
+
+class PLP_Test
+{
+	idd = 15002;
+	class controls
+	{
+		class Texture: RscText
+		{
+		type=106;
+			idc = 1337;
+			//x = safeZoneX;
+			//y = safeZoneY+safeZoneH-(pixelH*2048);
+			x = 0;
+			y = 0;
+			w = 1;
+			h = 1;
+			colorText[] = {1,1,1,1};
+			text = "#(rgb,1,1,1)color(0.5,0,0,1,ca)";
+			
+			
+			url = "https://www.youtube.com/watch?v=k8Jtm1eNpeU";
+		
+		};
+	};
+	onLoad = "GMyData2 = _this, uiNamespace setVariable ['GMyData2', _this]; addMissionEventHandler ['EachFrame', {_disp = _thisArgs#0; displayUpdate _disp;}, [_this#0]];";
+};
+
+class RscTitles
+{
+	class KillTrackerUI
+	{
+		idd = 15002;
+		fadein = 0;
+		fadeout = 0;
+		duration = 1e+011;
+		onLoad = "GKillTracker = _this";
+
+		class controls
+		{
+			class Texture: RscText
+			{
+				type=106;
+				idc = 1337;
+				x = safeZoneX;
+				//y = safeZoneY+safeZoneH-(pixelH*2048);
+				y = safeZoneY;
+				w = safeZoneW;
+				h = safeZoneH;
+				colorText[] = {1,1,1,1};
+				text = "#(rgb,1,1,1)color(0.5,0,0,1,ca)";
+				
+				
+				url = "https://www.youtube.com/watch?v=k8Jtm1eNpeU";
+			
+			};
+		};
+	};
+}

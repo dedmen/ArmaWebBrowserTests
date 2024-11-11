@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "lib": ["es6", "DOM"],
+    "allowJs": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
+    "skipLibCheck": true,
+
+    "sourceMap": true,
+    "importsNotUsedAsValues": "preserve"
+  },
+  "include": ["src/**/*", "tsd.d.ts"],
+  "exclude": ["src/**/*.spec.ts"]
+}
