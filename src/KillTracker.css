@@ -12,9 +12,10 @@
 
     display: flex;
     flex-direction: column;
-    margin-top: 10%;
+    margin-top: 8vh;
     justify-content: flex-start;
-    align-items: baseline;
+    align-items: end;
+    padding-right: 50px;
 }
 
 .killTrackerRow {

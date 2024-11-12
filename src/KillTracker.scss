@@ -1,0 +1,118 @@
+//@import url(https://fonts.googleapis.com/css?family=Righteous);
+// We need the actual font content, to be embedded in our document as data-url.
+// Webpack's url-loader would already do it, if we load it as local asset, so we need to download the font files and manually put them into our project
+// It is definitely possible to write a webpack plugin/script to do this automatically
+
+/* latin-ext */
+@font-face {
+    font-family: 'Righteous';
+    font-style: normal;
+    font-weight: 400;
+    src: url(./assets/1cXxaUPXBpj2rGoU7C9WhnGFucE.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* latin */
+  @font-face {
+    font-family: 'Righteous';
+    font-style: normal;
+    font-weight: 400;
+    src: url(./assets/1cXxaUPXBpj2rGoU7C9WiHGF.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+
+
+// Rainbow css effect by https://www.linkedin.com/in/mateusgeneroso
+// https://codepen.io/mtsgeneroso/pen/mdJRpxX
+
+$root: '.c-rainbow';
+
+
+#topCenterSpecial {
+    //--axis-x: 1px;
+    --axis-y: 2rem;
+    --delay: 10;
+    
+    --color-black: #000;
+    --color-white: #fff;
+    --color-orange: #D49C3D;
+    --color-red: #D14B3D;
+    --color-violet: #CF52EB;
+    --color-blue: #44A3F7;
+    --color-green: #5ACB3C;
+    --color-yellow: #DEBF40;
+    
+    --color-foreground: var(--color-white);
+    --font-name: Righteous;
+ 
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    
+    font-family: var(--font-name);
+    
+    //height: 100vh;
+    padding-top: 4rem;
+}
+
+#{$root} {
+    counter-reset: rainbow;
+    position: relative;
+    display: block;
+
+    list-style: none;
+
+    padding: 0;
+    margin: 0;
+
+    &__layer {
+        --text-color: var(--color-foreground);
+        counter-increment: rainbow; 
+        font-size: 3rem;
+        color: var(--text-color);
+
+        text-shadow:
+        -1px -1px 0 var(--color-black),  
+        1px -1px 0 var(--color-black),
+        -1px 1px 0 var(--color-black),
+        1px 1px 0 var(--color-black),
+        
+        4px 4px 0 rgba(0, 0, 0, .2);
+        
+        animation: rainbow 1.5s ease-in-out infinite;
+        
+        @for $i from 1 through 7 {
+            &:nth-child(#{$i}) {
+                animation-delay: calc( #{$i} / var(--delay) * 1s);
+                left: calc(var(--axis-x) * #{$i});
+                z-index: -#{$i * 10};
+            }
+        }
+        
+        &:not(:first-child) {
+        position: absolute;
+        top: 0;
+        }
+
+        &--white  { --text-color: var(--color-white)}
+        &--orange { --text-color: var(--color-orange)}
+        &--red    { --text-color: var(--color-red)}
+        &--violet { --text-color: var(--color-violet)}
+        &--blue   { --text-color: var(--color-blue)}
+        &--green  { --text-color: var(--color-green)}
+        &--yellow { --text-color: var(--color-yellow)}
+    }
+}
+
+@keyframes rainbow {
+    0%, 100% {
+        transform: translatey(var(--axis-y)); 
+    }
+    50% {
+        transform: translatey(calc(var(--axis-y) * -1));
+    }
+}
+
+
+
+

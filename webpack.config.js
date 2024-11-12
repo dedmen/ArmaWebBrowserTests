@@ -2,76 +2,85 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").default;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HTMLInlineCSSWebpackPlugin = require('html-inline-css-webpack-plugin').default;
 
-const ROOT = path.resolve( __dirname, 'src' );
-const DESTINATION = path.resolve( __dirname, 'dist' );
+const ROOT = path.resolve(__dirname, 'src');
+const DESTINATION = path.resolve(__dirname, 'dist');
 
 module.exports = {
-    context: ROOT,
+  context: ROOT,
 
-    entry: {
-        'main': './index.ts'
-    },
-    
-    output: {
-        filename: '[name].bundle.js',
-        path: DESTINATION
-    },
+  entry: {
+    main: './index.ts',
+  },
 
-    resolve: {
-        extensions: ['.ts', '.js'],
-        modules: [
-            ROOT,
-            'node_modules'
-        ]
-    },
+  output: {
+    filename: '[name].bundle.js',
+    path: DESTINATION,
+  },
 
-    module: {
-        rules: [
-            /****************
-            * LOADERS
-            *****************/
-            {
-                test: /\.tsx?$/,
-                use: "ts-loader",
-                exclude: /node_modules/,
-            },
+  resolve: {
+    extensions: ['.ts', '.js'],
+    modules: [ROOT, 'node_modules'],
+  },
 
-            {
-                test: /a3api\.ts$/,
-                loader: "expose-loader",
-                options: {
-                  exposes: "A3API",
-                  // To access please use `window.A3API`
-                },
-            },
+  module: {
+    rules: [
+      /****************
+       * LOADERS
+       *****************/
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
 
-            {
-                test: /\.css$/,
-                use: [
-                  MiniCssExtractPlugin.loader,
-                  "css-loader"
-                ]
-            }
-        ]
-    },
+      {
+        test: /a3api\.ts$/,
+        loader: 'expose-loader',
+        options: {
+          exposes: 'A3API',
+          // To access please use `window.A3API`
+        },
+      },
 
-    plugins: [
-        new MiniCssExtractPlugin({
-            filename: "[name].css",
-            chunkFilename: "[id].css"
-        }),
-        new HtmlWebpackPlugin({
-            template: "./index.html",
-            inject: true,
-            minify: true
-        }),
-        new HtmlInlineScriptPlugin(),
-        new HTMLInlineCSSWebpackPlugin(),
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+      {
+        test: /\.svg$/,
+        loader: 'url-loader',
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+          // Translates CSS into CommonJS
+          'css-loader',
+          // Compiles Sass to CSS
+          'sass-loader',
+        ],
+      },
     ],
+  },
 
-    devtool: 'cheap-module-source-map',
-    devServer: {}
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      inject: true,
+      minify: true,
+    }),
+    new HtmlInlineScriptPlugin(),
+    new HTMLInlineCSSWebpackPlugin(),
+  ],
+
+  devtool: 'cheap-module-source-map',
+  devServer: {},
 };
