@@ -21,11 +21,11 @@ export class A3API {
    *
    * @param filePath - Path in game filesystem, without leading backslash
    * @param maxSize - maximum texture width (used to select Mip)
-   * @returns The image as a data-url
+   * @returns The file content as raw string
    */
   static RequestTexture(texturePath: string, maxSize: number): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (A3API._push(`tex${texturePath};${maxSize}`, { resolve, reject })) // Only if new request, and not already queued
+      if (A3API._push(`t:${texturePath};${maxSize}`, { resolve, reject })) // Only if new request, and not already queued
         A3API.SendAlert(`__A3TexReq;${texturePath};${maxSize}`);
     });
   }
@@ -34,11 +34,11 @@ export class A3API {
    * Loads file from game filesystem.
    *
    * @param filePath - same as loadFile SQF command
-   * @returns The file content
+   * @returns The file content as raw string
    */
   static RequestFile(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (A3API._push(`file${filePath}`, { resolve, reject }))
+      if (A3API._push(`f:${filePath}`, { resolve, reject }))
         A3API.SendAlert(`__A3FileReq;${filePath}`);
     });
   }
@@ -51,7 +51,7 @@ export class A3API {
    */
   static RequestPreprocessedFile(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (A3API._push(`fileP${filePath}`, { resolve, reject }))
+      if (A3API._push(`fP:${filePath}`, { resolve, reject }))
         A3API.SendAlert(`__A3FilePReq;${filePath}`);
     });
   }
