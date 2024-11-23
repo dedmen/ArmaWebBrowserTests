@@ -2,7 +2,7 @@ import { A3API } from './A3API';
 import './Radar.scss';
 //import blipAudio from './assets/sonar-ping-95840.wav';
 
-const RadarFullRotationTime = 6000; // milliseconds, set in CSS
+const RadarFullRotationTime = 4000; // milliseconds, must match $rotationSpeed in Radar.scss
 
 class RadarBlip {
 
@@ -26,6 +26,12 @@ class RadarBlip {
             //var snd = document.getElementById('radarSound') as HTMLAudioElement;
             //snd.fastSeek(0);
             //snd.play();
+        });
+
+        // https://codepen.io/bramus/pen/xxaLXeJ Synchronized Animation Timeline
+        this.element.getAnimations().forEach((anim) => {
+            // Set to 0. Syncs everything, but delay only applied during first few ticks
+            anim.startTime = 0;
         });
     }
 
@@ -130,6 +136,13 @@ export class Radar {
 
             
             `); // <audio id="radarSound" autoplay src="${blipAudio}" />
+
+        // https://codepen.io/bramus/pen/xxaLXeJ Synchronized Animation Timeline
+        document.getElementById('radarScanner')?.getAnimations().forEach((anim) => {
+            // Set to 0. Syncs everything, but delay only applied during first few ticks
+            anim.startTime = 0;
+        });
+
 
         Radar.AddBlip("a", [0, 512]);
         Radar.AddBlip("b", [512, 0]);
