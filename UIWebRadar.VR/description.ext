@@ -1,0 +1,27 @@
+import RscText;
+class RscTitles
+{
+	class HudOverlayUI
+	{
+		idd = 13371337;
+		fadein = 0; // Required parameters for RscTitles
+		fadeout = 0;
+		duration = 1e+011;
+
+		onLoad = "GHUDOverlay = _this"; // Store our Display in a variable so we can access it from script
+
+		class controls
+		{
+			class Texture: RscText
+			{
+				type = 106; // CT_WEBBROWSER
+				idc = 1337;
+				x = safeZoneX; // Full screen from corner to corner
+				y = safeZoneY;
+				w = safeZoneW;
+				h = safeZoneH;
+				url = "file://hudOverlay.html"; // Reference to a file inside our mission
+			};
+		};
+	};
+};

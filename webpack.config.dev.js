@@ -64,6 +64,10 @@ var configCommon = {
         type: 'asset/inline',
       },
       {
+        test: /\.(wav)$/,
+        type: 'asset/inline',
+      },
+      {
         test: /\.s[ac]ss$/i,
         use: [
           // Creates `style` nodes from JS strings

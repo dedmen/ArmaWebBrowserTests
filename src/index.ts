@@ -8,5 +8,7 @@ import "expose-loader?exposes=A3API|A3API|true!./A3API";
 // Inject KillTracker into window. We will call into it from script
 import "expose-loader?exposes=KillTracker|KillTracker!./KillTracker";
 
+import "expose-loader?exposes=Radar|Radar!./Radar";
+
 import "./main.scss";
 
