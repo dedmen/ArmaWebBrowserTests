@@ -18,8 +18,8 @@
   border-radius: 50%;
   transform: rotate(0deg);
   overflow: hidden;
-  //height: 100vh;
-  height: 512px;
+  height: 99.6vh; // With 100%, we get our border cut off at the edges
+  //height: 512px;
   aspect-ratio: 1;
   border: 1px solid #393;
   
@@ -78,6 +78,15 @@
       background: #AFA;
       margin: -5px; // Center it on the position that we assign to it
     }
+
+    span {
+      color: #0F0;
+      text-wrap-mode: nowrap;
+      position: relative;
+      top: -10px;
+      left: 10px;
+      font-size: 15px;
+    }
   }
 }
 
@@ -90,14 +99,14 @@
 @keyframes target {
   1% {
     opacity: .5;
-    transform: scale(2.5);
+    //transform: scale(2.5);
   }
   3% {
     opacity: 1;
-    transform: scale(1.5);
+    //transform: scale(1.5);
   }
-  60% {
+  40% { // This percentage controls how long the blip is visible
     opacity: 0;
-    transform: scale(.6);
+    //transform: scale(.6);
   }
 }

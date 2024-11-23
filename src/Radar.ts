@@ -8,12 +8,16 @@ class RadarBlip {
 
     position: [number, number] = [0,0];
     element: HTMLLIElement;
+    textElement: HTMLSpanElement;
 
     constructor() {
         var list = document.getElementById('radarContent') as HTMLUListElement;
 
         var newElement = document.createElement('li');
         this.element = list.insertAdjacentElement(`beforeend`, newElement) as HTMLLIElement;
+
+        var textElement = document.createElement('span');
+        this.textElement = this.element.insertAdjacentElement(`beforeend`, textElement) as HTMLLIElement;
 
         this.element.addEventListener(`animationiteration`, (ev) => {
             
@@ -35,6 +39,11 @@ class RadarBlip {
         var b = p1[1] - p2[1];
 
         return Math.sqrt( a*a + b*b );
+    }
+
+    SetText(text: string)
+    {
+        this.textElement.textContent = text;
     }
 
     UpdatePosition(panelGameCoordinates: [number, number, number, number /*Top left, Bottom right*/]) {
@@ -134,16 +143,18 @@ export class Radar {
         Radar.SetPanelGameCoordinates([0,0,2048,2048]);
     }
 
-    static AddBlip(name: string, position:[number, number])
+    static AddBlip(name: string, position:[number, number]) : RadarBlip
     {
         var blip = new RadarBlip();
         blip.position = position;
         blip.UpdatePosition(Radar.panelGameCoordinates);
 
         Radar.blips.set(name, blip);
+
+        return blip;
     }
 
-    static UpdateBlips(blips: Array<[string, number, number]>)
+    static UpdateBlips(blips: Array<[string, number, number, string]>)
     {
         // Delete all blips that are not in this array
 
@@ -161,15 +172,17 @@ export class Radar {
             }
             else
             {
-                Radar.AddBlip(blip[0], [blip[1], blip[2]]);
+                blipEntry = Radar.AddBlip(blip[0], [blip[1], blip[2]]);
             }
+
+            blipEntry.SetText(blip[3]);
         });
     }
 
     static ClearBlips()
     {
         Radar.blips.forEach(x => x.Remove());
-        Radar.blips = [];
+        Radar.blips.clear();
     }
 
     static SetPanelGameCoordinates(panelGameCoordinates: [number, number, number, number /*Top left, Bottom right*/])

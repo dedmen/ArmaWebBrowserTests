@@ -17,11 +17,37 @@ class RscTitles
 				type = 106; // CT_WEBBROWSER
 				idc = 1337;
 				x = safeZoneX; // Full screen from corner to corner
-				y = safeZoneY;
-				w = safeZoneW;
-				h = safeZoneH;
+				y = safeZoneY+safeZoneH/2-(safeZoneH/4)/2;
+				w = safeZoneW/4; // Top left corner
+				h = safeZoneH/4;
 				url = "file://hudOverlay.html"; // Reference to a file inside our mission
 			};
+		};
+	};
+};
+
+
+
+class RscRadarUI
+{
+	idd = 13371337;
+	fadein = 0; // Required parameters for RscTitles
+	fadeout = 0;
+	duration = 1e+011;
+
+	onLoad = "_this call ded_fnc_createRadarUIOnTex"; // Store our Display in a variable so we can access it from script
+
+	class controls
+	{
+		class Texture: RscText
+		{
+			type = 106; // CT_WEBBROWSER
+			idc = 1337;
+			x = 0; // Full screen from corner to corner
+			y = 0;
+			w = 1;
+			h = 1;
+			url = "file://hudOverlay.html"; // Reference to a file inside our mission
 		};
 	};
 };
