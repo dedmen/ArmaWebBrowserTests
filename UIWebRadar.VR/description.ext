@@ -8,7 +8,7 @@ class RscTitles
 		fadeout = 0;
 		duration = 1e+011;
 
-		onLoad = "GHUDOverlay = _this"; // Store our Display in a variable so we can access it from script
+		onLoad = "_this call ded_fnc_onRadarHUDOpen"; // Store our Display in a variable so we can access it from script
 
 		class controls
 		{

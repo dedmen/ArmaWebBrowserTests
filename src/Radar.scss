@@ -71,7 +71,7 @@ $rotationSpeed: 4s;
     li {
       animation: target $rotationSpeed infinite linear;
       border-radius: 50%;
-      box-shadow:0 0 10px #AFA;
+      box-shadow: 0 0 10px #AFA;
       opacity: 0;
       display: block;
       position: absolute;
@@ -79,15 +79,33 @@ $rotationSpeed: 4s;
       height: 10px;
       background: #AFA;
       margin: -5px; // Center it on the position that we assign to it
+
+      span {
+        color: #0F0;
+        text-wrap: nowrap;
+        position: relative;
+        top: -10px;
+        left: 10px;
+        font-size: 15px;
+      }
+    }
+    
+    .friend {
+      //box-shadow: 0 0 10px blue;
+      background: rgb(57, 92, 252);
+
+      span {
+        color: rgb(57, 92, 252);
+      }
     }
 
-    span {
-      color: #0F0;
-      text-wrap-mode: nowrap;
-      position: relative;
-      top: -10px;
-      left: 10px;
-      font-size: 15px;
+    .enemy {
+      box-shadow: 0 0 10px red;
+      background: red;
+
+      span {
+        color: red;
+      }
     }
   }
 }
@@ -107,7 +125,7 @@ $rotationSpeed: 4s;
     opacity: 1;
     //transform: scale(1.5);
   }
-  40% { // This percentage controls how long the blip is visible
+  60% { // This percentage controls how long the blip is visible
     opacity: 0;
     //transform: scale(.6);
   }

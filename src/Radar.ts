@@ -5,7 +5,6 @@ import './Radar.scss';
 const RadarFullRotationTime = 4000; // milliseconds, must match $rotationSpeed in Radar.scss
 
 class RadarBlip {
-
     position: [number, number] = [0,0];
     element: HTMLLIElement;
     textElement: HTMLSpanElement;
@@ -50,6 +49,10 @@ class RadarBlip {
     SetText(text: string)
     {
         this.textElement.textContent = text;
+    }
+
+    SetClass(arg0: string) {
+        this.element.className = arg0;
     }
 
     UpdatePosition(panelGameCoordinates: [number, number, number, number /*Top left, Bottom right*/]) {
@@ -114,7 +117,13 @@ class RadarBlip {
 
 
 
-
+type BlipUpdate = [
+    string, // hash id
+    number, // X
+    number, // Y
+    string, // Text
+    string // class
+]
 
 
 
@@ -167,7 +176,7 @@ export class Radar {
         return blip;
     }
 
-    static UpdateBlips(blips: Array<[string, number, number, string]>)
+    static UpdateBlips(blips: Array<BlipUpdate>)
     {
         // Delete all blips that are not in this array
 
@@ -189,6 +198,7 @@ export class Radar {
             }
 
             blipEntry.SetText(blip[3]);
+            blipEntry.SetClass(blip[4]);
         });
     }
 
@@ -227,15 +237,20 @@ export class Radar {
 
         var gameToPanel = panelDistCenterToEdge / gameWidth; // Ratio to convert ingame distance in meters, into panel pixels
         var distanceAccum = 100 * gameToPanel;
+        var step = 1;
 
         while (gameWidth > 100)
         {
             // We walk from inside out, but the coordinates of the lines are distance from outside
-
-            linesStyle.push(`inset 0 0 0 ${panelDistCenterToEdge - distanceAccum - 1}px #222, inset 0 0 0 ${panelDistCenterToEdge - distanceAccum}px rgba(0, 255, 0, 0.2)`);
-            
+            if (step % 5 == 0){
+                linesStyle.push(`inset 0 0 0 ${panelDistCenterToEdge - distanceAccum - 1}px #222, inset 0 0 0 ${panelDistCenterToEdge - distanceAccum}px rgba(255, 0, 0, 0.2)`);
+            } else {
+                linesStyle.push(`inset 0 0 0 ${panelDistCenterToEdge - distanceAccum - 1}px #222, inset 0 0 0 ${panelDistCenterToEdge - distanceAccum}px rgba(0, 255, 0, 0.2)`);
+            }
+        
             gameWidth -= 100;
             distanceAccum += 100 * gameToPanel;
+            step++;
         }
 
         var styleText = linesStyle.reverse().join(",\n");
