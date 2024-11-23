@@ -1,7 +1,7 @@
 ded_fnc_updateRadar = {
 	params ["_ctrl"];
 
-	private _radarRange = 1024;
+	private _radarRange = 2048;
 	private _radarRangeIFF = 512; // Range at which we know whether friend or foe
 
 	private _towerPos = getPosWorld RadarTower;
@@ -27,9 +27,12 @@ ded_fnc_updateRadar = {
 		private _vPos = getPosWorld _x;
 		if (_vPos#2 < _towerHeight) then {continueWith ""};
 		_vPos resize 2;
-
-		private _class = ["friend", "enemy"] select ((side player getFriend side _x) < 0.6);
-		format["['%1',%2,%3,'%4','%5'],", hashValue _x, _vPos#0, _vPos#1, groupId group _x, _class]
+		private _isEnemy = (side player getFriend side _x) < 0.6;
+		format[
+			"['%1',%2,%3,'%4','%5'],", hashValue _x, _vPos#0, _vPos#1,
+			if (_isEnemy) then [{getText (configOf _x >> "displayName")}, {groupId group _x}], 
+			["friend", "enemy"] select _isEnemy
+		]
 	};
 
 	private _blipInsertsUNK = _unknownVehicles apply {
@@ -38,7 +41,6 @@ ded_fnc_updateRadar = {
 		_vPos resize 2;
 		format["['%1',%2,%3,'%4',''],", hashValue _x, _vPos#0, _vPos#1, ""]
 	};
-
 	_ctrl ctrlWebBrowserAction ["ExecJS", "Radar.UpdateBlips([" + (_blipInsertsIFF joinString "") + (_blipInsertsUNK joinString "") + "]);"];
 };
 

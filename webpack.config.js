@@ -4,6 +4,7 @@ const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HTMLInlineCSSWebpackPlugin = require('html-inline-css-webpack-plugin').default;
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const ROOT = path.resolve(__dirname, 'src');
 const DESTINATION = path.resolve(__dirname, 'dist');
@@ -50,8 +51,16 @@ module.exports = {
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
-        test: /\.svg$/,
-        loader: 'url-loader',
+        test: /\.(svg)$/,
+        type: 'asset/inline',
+      },
+      {
+        test: /\.(woff2)$/,
+        type: 'asset/inline',
+      },
+      {
+        test: /\.(wav)$/,
+        type: 'asset/inline',
       },
       {
         test: /\.s[ac]ss$/i,
@@ -59,10 +68,24 @@ module.exports = {
           // Creates `style` nodes from JS strings
           'style-loader',
           // Translates CSS into CommonJS
-          'css-loader',
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: false,
+            },
+          },
           // Compiles Sass to CSS
-          'sass-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: false,
+            },
+          },
         ],
+      },
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
       },
     ],
   },
@@ -72,13 +95,14 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css',
     }),
+    new HtmlInlineScriptPlugin(),
+    new HTMLInlineCSSWebpackPlugin(),
+    new CleanWebpackPlugin({ cleanStaleWebpackAssets: true, verbose: true }),
     new HtmlWebpackPlugin({
       template: './index.html',
       inject: true,
       minify: true,
     }),
-    new HtmlInlineScriptPlugin(),
-    new HTMLInlineCSSWebpackPlugin(),
   ],
 
   devtool: 'cheap-module-source-map',

@@ -1,8 +1,17 @@
 import { A3API } from './A3API';
 import './Radar.scss';
 //import blipAudio from './assets/sonar-ping-95840.wav';
+import RadarTemplate from './RadarTemplate.html';
 
 const RadarFullRotationTime = 4000; // milliseconds, must match $rotationSpeed in Radar.scss
+
+// Convert text that was Base64 decoded to ASCII, into UTF8
+function TextAsUTF8(str: string) {
+    // Going backwards: from bytestream, to percent-encoding, to original string.
+    return decodeURIComponent(str.split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
 
 class RadarBlip {
     position: [number, number] = [0,0];
@@ -18,14 +27,16 @@ class RadarBlip {
         var textElement = document.createElement('span');
         this.textElement = this.element.insertAdjacentElement(`beforeend`, textElement) as HTMLLIElement;
 
+        /* 
         this.element.addEventListener(`animationiteration`, (ev) => {
             
             // When this runs, we should make a blip sound
 
-            //var snd = document.getElementById('radarSound') as HTMLAudioElement;
-            //snd.fastSeek(0);
-            //snd.play();
+            var snd = document.getElementById('radarSound') as HTMLAudioElement;
+            snd.fastSeek(0);
+            snd.play();
         });
+        */
 
         // https://codepen.io/bramus/pen/xxaLXeJ Synchronized Animation Timeline
         this.element.getAnimations().forEach((anim) => {
@@ -134,17 +145,8 @@ export class Radar {
 
 
     static Init() {
-        document.getElementById('topCenterSpecial')?.insertAdjacentHTML(
-            'afterbegin',
-            `
-            <div class="panel" id="radarPanel">
-                <div class="scanner" id="radarScanner"></div>
-                <ul class="something" id="radarContent">
-                </ul>
-            </div>
-
-            
-            `); // <audio id="radarSound" autoplay src="${blipAudio}" />
+        document.getElementById('topCenterSpecial')?.insertAdjacentHTML('afterbegin',RadarTemplate);
+        // <audio id="radarSound" autoplay src="${blipAudio}" />
 
         // https://codepen.io/bramus/pen/xxaLXeJ Synchronized Animation Timeline
         document.getElementById('radarScanner')?.getAnimations().forEach((anim) => {
@@ -197,7 +199,8 @@ export class Radar {
                 blipEntry = Radar.AddBlip(blip[0], [blip[1], blip[2]]);
             }
 
-            blipEntry.SetText(blip[3]);
+            //Game doesn't properly decode utf8 base64, so we do it here
+            blipEntry.SetText(TextAsUTF8(blip[3]));
             blipEntry.SetClass(blip[4]);
         });
     }
@@ -233,7 +236,6 @@ export class Radar {
 
         // We are going from the center outwards.
         var panelDistCenterToEdge = panel?.clientWidth / 2;
-        var gameDistCenterToEdge = gameWidth;
 
         var gameToPanel = panelDistCenterToEdge / gameWidth; // Ratio to convert ingame distance in meters, into panel pixels
         var distanceAccum = 100 * gameToPanel;

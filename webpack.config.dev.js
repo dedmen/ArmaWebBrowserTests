@@ -88,6 +88,10 @@ var configCommon = {
           },
         ],
       },
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
+      },
     ],
   },
 

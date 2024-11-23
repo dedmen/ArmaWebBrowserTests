@@ -1,5 +1,4 @@
 import { A3API } from './A3API';
-import './KillTracker.css';
 import './KillTracker.scss';
 //import * as $ from 'jquery';
 import crosshair_image from './assets/crosshair.svg';
