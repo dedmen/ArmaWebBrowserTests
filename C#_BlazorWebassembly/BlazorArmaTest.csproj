@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="BuildTaskLibrary\**" />
+    <Content Remove="BuildTaskLibrary\**" />
+    <EmbeddedResource Remove="BuildTaskLibrary\**" />
+    <None Remove="BuildTaskLibrary\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.11" PrivateAssets="all" />
+  </ItemGroup>
+
+
+<UsingTask TaskName="BuildTaskLibrary.ArmaPublishTask" AssemblyFile="BuildTaskLibrary\bin\Release\netstandard2.0\BuildTaskLibrary.dll" />  
+	
+<Target Name="B64EncodeWasm" AfterTargets="AfterPublish">
+  <ArmaPublishTask PublishTargetDir="$(MSBuildProjectDirectory)\$(PublishUrl)" />  
+</Target>
+
+
+<PropertyGroup>
+    <InvariantGlobalization>true</InvariantGlobalization>
+</PropertyGroup>
+
+
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <DebugType>embedded</DebugType>
+</PropertyGroup>
+
+
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <DebugType>embedded</DebugType>
+</PropertyGroup>
+
+</Project>

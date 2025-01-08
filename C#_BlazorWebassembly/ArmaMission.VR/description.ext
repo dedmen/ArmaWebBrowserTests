@@ -1,0 +1,97 @@
+import RscText;
+class RscTitles
+{
+	class HudOverlayUI
+	{
+		idd = 13371337;
+		fadein = 0; // Required parameters for RscTitles
+		fadeout = 0;
+		duration = 1e+011;
+
+		onLoad = "GHUDOverlay = _this"; // Store our Display in a variable so we can access it from script
+
+		class controls
+		{
+			class Texture: RscText
+			{
+				type = 106; // CT_WEBBROWSER
+				idc = 1337;
+				x = safeZoneX; // Full screen from corner to corner
+				y = safeZoneY;
+				w = safeZoneW;
+				h = safeZoneH;
+				//url = "file://hudOverlay.html"; // Reference to a file inside our mission
+			};
+		};
+	};
+};
+
+class RscBrowserOffline
+{
+	idd=157;
+	class Controls
+	{
+		class Background1: RscText
+		{
+			x=0;
+			y=0;
+			w=1;
+			h=1;
+			colorBackground[]={0,1,0,0.4};
+		};
+		class VideoTest: RscText
+		{
+			type=106;
+			idc=1337;
+			x="0";
+			y="0";
+			w="1";
+			h="1";
+			
+			colorBackground[]={0,0,1,0.4};
+			//url = "file://hudOverlay.html"; // Reference to a file inside our mission
+		};
+		
+	};
+	
+	onLoad = "GMyData = _this, uiNamespace setVariable ['GMyData', _this];";
+};
+
+class RscBrowserOnline
+{
+	idd=157;
+	class Controls
+	{
+		class Background1: RscText
+		{
+			x=0;
+			y=0;
+			w=1;
+			h=1;
+			colorBackground[]={0,1,0,0.4};
+		};
+		class VideoTest: RscText
+		{
+			type=106;
+			idc=1337;
+			x="0";
+			y="0";
+			w="1";
+			h="1";
+			
+			colorBackground[]={0,0,1,0.4};
+			allowExternalURL = 1; // This makes it require manual approval by user
+		};
+		
+	};
+	
+	onLoad = "GMyData = _this, uiNamespace setVariable ['GMyData', _this];";
+};
+
+class CfgCommands 
+{
+	allowedHTMLLoadURIs[] =
+	{
+		"*localhost*"
+	};
+}

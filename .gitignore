@@ -108,3 +108,17 @@ dist
 
 JavascriptWebpack/build/
 JavascriptWebpack/ArmaMission/index.html
+
+C#_BlazorWebassembly/.vs/
+
+C#_BlazorWebassembly/bin/
+
+C#_BlazorWebassembly/BuildTaskLibrary/obj/
+
+C#_BlazorWebassembly/BuildTaskLibrary/bin/
+
+C#_BlazorWebassembly/obj/
+
+C#_BlazorWebassembly/Properties/PublishProfiles/FolderProfile.pubxml.user
+
+*.user

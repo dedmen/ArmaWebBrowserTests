@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>BlazorArmaTest</title>
+	<base href="arma://mission/" />
+	<!--<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/app.css" />
+	<link rel="icon" type="image/png" href="favicon.png" />
+	<link href="BlazorArmaTest.styles.css" rel="stylesheet" />-->
+
+
+	<script>
+		async function decompressGzip(compressedBytes) {
+			// Convert the bytes to a stream.
+			const stream = new Blob([compressedBytes]).stream();
+
+			// Create a decompressed stream.
+			const decompressedStream = stream.pipeThrough(
+				new DecompressionStream("gzip")
+			);
+
+			// Read all the bytes from this stream.
+			const chunks = [];
+			for await (const chunk of decompressedStream) {
+				chunks.push(chunk);
+			}
+
+			async function concatUint8Arrays(uint8arrays) {
+				const blob = new Blob(uint8arrays);
+				const buffer = await blob.arrayBuffer();
+				return new Uint8Array(buffer);
+			}
+
+			const stringBytes = await concatUint8Arrays(chunks);
+
+			// Convert the bytes to a string.
+			return stringBytes;
+		}
+
+		const { fetch: originalFetch } = window;
+		window.fetch = async (...args) => {
+			let [resource, config ] = args;
+
+			console.log("fetch", resource, config);
+
+			// Intercept our arma requests, they are relative requests so they always start with the baseURI specified in <base> tag above
+			if(resource.startsWith("arma://"))
+			{
+				var filePath = resource.substring(7) // cut off arma://
+
+				if (filePath.startsWith("mission/")) // cut off mission/ the file path is now relative to mission folder (We may do more tweaks later to use getMissionPath here?)
+					filePath = filePath.substring(8);
+				else // Path is a Arma path, but global, not mission relative. So we add leading slash to make it a global path
+					filePath = "/" + filePath;
+
+				filePath = filePath.replaceAll("/","\\"); // Arma uses backslash
+
+				console.log("fetchArma", filePath);
+
+				var decompress = false;
+				var contentType = "";
+
+				if (filePath.endsWith(".wasm"))
+				{
+					// This might be a bit messy, we assume that ArmaPublishTask runs, and that all our .wasm files are gzip compressed and named .wasm.b64
+					filePath = filePath + ".b64";
+					decompress = true;
+					contentType = "application/wasm"; // If content type is not correct, wasm will refuse to load the file
+				}
+
+				var fileContent = await window.A3API.RequestFile(filePath);
+
+				// Here I have some hooks for required source code edits we need to make in the framework js files
+				// We need to redirect their file loads, to go through the A3API
+				if (resource.endsWith("_framework/dotnet.js")){
+					// Use our import hook for their modules
+					fileContent = fileContent.replace("import(e.resolvedUrl)", "window.InterceptResolveImport(e.resolvedUrl)");
+					fileContent = fileContent.replace("import(t.resolvedUrl)", "window.InterceptResolveImport(t.resolvedUrl)");
+				}
+
+				if (resource.endsWith("_framework/dotnet.runtime.js")){
+					// Use our import hook for their modules
+					//fileContent = fileContent.replace('a&&"application/wasm"', '(()=>{debugger;true})()&&a&&"application/wasm"');
+					//fileContent = fileContent.replace('const r=await e.pendingDownloadInternal', 'debugger;const r=await e.pendingDownloadInternal');
+					//fileContent = fileContent.replace('const e=await WebAssembly.instantiateStreaming(r,t)', 'debugger;const e=await WebAssembly.instantiateStreaming(r,t)');
+				}
+
+				const responseOptions = { status: 200, statusText: "OK", headers: {} };
+				responseOptions.headers["Content-Type"] = contentType;
+
+				if (filePath.endsWith(".b64"))
+					fileContent = atob(fileContent);
+
+				var contentBytes = Uint8Array.from(fileContent, c => c.charCodeAt(0));
+
+				if (decompress)
+					contentBytes = await decompressGzip(contentBytes);
+
+				return new Response(contentBytes, responseOptions);
+			}
+
+			const response = await originalFetch(resource, config);
+
+			return response
+		}
+
+		// Wait for the A3API to be present, before we initiate the blazor load (Actually, it should always be ready before this code runs anyway so we shouldn't need this...)
+		// Blazor.webassembly.js will do imports, and these imported files will do fetch'es which all need to pipe back into A3API
+
+		setTimeout(async function waitForAPI(){
+			console.log(typeof window.A3API);
+			if (typeof window.A3API === "function") {
+
+				let makeBlobUrl = (content, type) => {
+					return URL.createObjectURL(new Blob([Uint8Array.from(content, c => c.charCodeAt(0))], {type: type}));
+				};
+
+				console.log("load!");
+				/* Insert  <script src="_framework/blazor.webassembly.js"> */
+				var script = document.createElement('script');
+				var fileContent = await (await fetch(`${document.baseURI}_framework/blazor.webassembly.js`)).text();
+
+				// We'll inject some changes into the code
+
+				fileContent = fileContent.replace("return await import(n)", "return await window.InterceptResolveImport(n)");
+
+
+				//fileContent = fileContent.replace("const n=new URL(t,document.baseURI).toString();", "debugger;const n=new URL(t,document.baseURI).toString();");
+				//fileContent = fileContent.replace(",import(e)", ",(()=>{debugger})(),window.InterceptResolveImport(e)");
+				fileContent = fileContent.replace(",import(e)", ",window.InterceptResolveImport(e)");
+				//fileContent = fileContent.replace(",o=await import(r)", ",o=await window.InterceptResolveImport(r);debugger");
+				fileContent = fileContent.replace(",o=await import(r)", ",o=await window.InterceptResolveImport(r)");
+				// Insert our hook to OnPostBWSAMLoad
+				fileContent = fileContent.replace('window.Blazor=nt;', 'window.Blazor=nt;window.OnPostBWSAMLoad();');
+
+
+				// Pressing on links of pages would try to navigate to our sandbox blob url
+				fileContent = fileContent.replaceAll('location.href', 'HistoryWrapper.currentLocation');
+				// cannot do in sandbox with no history, so we redirect all to wrapper
+				fileContent = fileContent.replaceAll('history.', 'HistoryWrapper.');
+
+				//debugger;
+				script.src = makeBlobUrl(fileContent, 'application/javascript');
+				//script.src = 'data:text/plain;charset=UTF-8,' + encodeURIComponent(fileContent);
+				document.documentElement.firstChild.appendChild(script);
+
+				{
+					//<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+
+					var link = document.createElement('link');
+					link.rel = 'stylesheet';
+					link.href = makeBlobUrl(await (await fetch(`${document.baseURI}css/bootstrap/bootstrap.min.css`)).text(), 'text/css');
+					document.head.appendChild(link);
+				}
+				{
+					// <link rel="stylesheet" href="css/app.css" />
+					var link = document.createElement('link');
+					link.rel = 'stylesheet';
+					link.href = makeBlobUrl(await (await fetch(`${document.baseURI}css/app.css`)).text(), 'text/css');
+					document.head.appendChild(link);
+				}
+				{
+					// <link rel="icon" type="image/png" href="favicon.png" />
+					// We'd need to handle base64 for this...
+				}
+				{
+					// <link href="BlazorArmaTest.styles.css" rel="stylesheet" />
+					var link = document.createElement('link');
+					link.rel = 'stylesheet';
+					link.href = makeBlobUrl(await (await fetch(`${document.baseURI}BlazorArmaTest.styles.css`)).text(), 'text/css');
+					document.head.appendChild(link);
+				}
+
+				return;
+			};
+			setTimeout(waitForAPI, 10); // Try again
+		}, 10);
+
+		window.InterceptResolveImport = async (moduleName) => {
+			// We just redirect to fetch, because fetch already handles our arma:// URLs
+			// And then we turn the data into a blob url, so that import can load it as if it were a normal URL
+			const response = await fetch(moduleName);
+			let content = await response.text();
+
+			// We need to fix this up, inner layers of scripts grab the meta.url and they fail when they see a blob url
+			//content = `console.log(import.meta, import.meta.url); import.meta.url='${moduleName}'; console.log(import.meta, import.meta.url);` + content;
+			content = `import.meta.url='${moduleName}';` + content;
+
+			let url = URL.createObjectURL(new Blob([Uint8Array.from(content, c => c.charCodeAt(0))], {type: 'application/javascript'}));
+
+			let module = await import(url);
+
+			return Promise.resolve(module);
+		};
+
+		window.OnPostBWSAMLoad = () => {
+			console.log("OnPostBWSAMLoad");
+			// We need to hack this, because otherwise we throw an exception
+			// Error: AggregateException_ctor_DefaultMessage (The URI 'blob:null/02d1b185-0433-4cb3-9501-a2b1967428ac' is not contained by the base URI 'arma://mission/'.)
+			// We cannot let it access location, because that is just a blob URL inside a sandbox. Instead we force it into the baseURI
+			window.Blazor._internal.navigationManager.getLocationHref = () => document.baseURI;
+		};
+
+		// We need to replace history handling, Blazor needs it to work, but it doesn't work inside our sandbox because we cannot navigate to pages
+
+		// We only need a few things
+		// history.state
+		// history.replaceState
+		// history.pushState
+		// history.go
+		// window.addEventListener("popstate"
+
+		window.HistoryWrapper = {
+			stateStorage: {},
+			currentLocation: document.baseURI,
+			lastTitle: null,
+			pushState: function(state, title, url) {
+				var t = document.title;
+				this.changeState(state, url);
+				document.title = t;
+			},
+
+			replaceState: function(state, title, url) {
+				var t = document.title;
+				delete this.stateStorage[this.currentLocation];
+				this.changeState(state, url, true);
+				document.title = t;
+			},
+
+			"state": {
+				get: function() {
+					if (typeof this.stateStorage[this.currentLocation] === 'object') {
+						return JSON.parse(JSON.stringify(this.stateStorage[this.currentLocation]));
+					} else if(typeof this.stateStorage[this.currentLocation] !== 'undefined') {
+						return this.stateStorage[this.currentLocation];
+					} else {
+						return null;
+					}
+				}
+			},
+
+			changeState: function(state, url, replace, lastURLValue) {
+				this.currentLocation = url;
+				this.stateStorage[this.currentLocation] = state;
+
+				var o = document.createEvent ? document.createEvent('Event') : document.createEventObject();
+				if (o.initEvent) {
+					o.initEvent('popstate', false, false);
+				} else {
+					o.type = 'popstate';
+				}
+				o.state = state;
+				// send a newly created events to be processed
+				dispatchEvent(o);
+			}
+		}
+
+
+
+	</script>
+
+
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <!--<script src="_framework/blazor.webassembly.js"></script>-->
+</body>
+
+</html>
