@@ -25,7 +25,7 @@ export class A3API {
    */
   static RequestTexture(texturePath: string, maxSize: number): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (A3API._push(`t:${texturePath};${maxSize}`, { resolve, reject })) // Only if new request, and not already queued
+      if (A3API._push(`t:${btoa(texturePath)};${maxSize}`, { resolve, reject })) // Only if new request, and not already queued
         A3API.SendAlert(`__A3TexReq;${texturePath};${maxSize}`);
     });
   }
@@ -38,7 +38,7 @@ export class A3API {
    */
   static RequestFile(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (A3API._push(`f:${filePath}`, { resolve, reject }))
+      if (A3API._push(`f:${btoa(filePath)}`, { resolve, reject }))
         A3API.SendAlert(`__A3FileReq;${filePath}`);
     });
   }
@@ -51,7 +51,7 @@ export class A3API {
    */
   static RequestPreprocessedFile(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (A3API._push(`fP:${filePath}`, { resolve, reject }))
+      if (A3API._push(`fP:${btoa(filePath)}`, { resolve, reject }))
         A3API.SendAlert(`__A3FilePReq;${filePath}`);
     });
   }
