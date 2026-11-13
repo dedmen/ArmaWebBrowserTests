@@ -22,15 +22,29 @@ DED_fnc_OnKilled = {
 
 addMissionEventHandler ["EntityKilled", DED_fnc_OnKilled];
 
-("DEDmyLayer" call BIS_fnc_rscLayer) cutRsc ["KillTrackerUI", "PLAIN"];
+//("DEDmyLayer" call BIS_fnc_rscLayer) cutRsc ["KillTrackerUI", "PLAIN"];
 
 hint "waiting";
 
-[] spawn {
-	Sleep 0.5;
-	hint "loaded!";
-	private _ctrl = (call DED_fnc_GetTrackerUI);
+//[] spawn {
+//	Sleep 0.5;
+//	hint "loaded!";
+//	private _ctrl = (call DED_fnc_GetTrackerUI);
+//
+//	_ctrl ctrlWebBrowserAction ["OpenDevConsole"];
+//	_ctrl ctrlWebBrowserAction ["LoadFile", "index.html"];
+//	
+//	createDialog "RscDisplayRenderTest";
+//};
 
-	_ctrl ctrlWebBrowserAction ["OpenDevConsole"];
-	_ctrl ctrlWebBrowserAction ["LoadFile", "index.html"];
-}
+player addAction ["Open!", { 
+  createDialog "RscDisplayRef";
+}];
+
+player addAction ["Open Alpha!", { 
+  createDialog "RscDisplayRefAlpha";
+}];
+
+player addAction ["Open flippy!", { 
+  createDialog "RscDisplayRefFlippy";
+}];

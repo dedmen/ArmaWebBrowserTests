@@ -3,6 +3,7 @@ import RscTitle;
 import RscLine;
 import RscVideo;
 import RscPicture;
+import RscEdit;
 
 class CfgCommands 
 {
@@ -14,7 +15,12 @@ class CfgCommands
 	};
 }
 
-
+#define GUI_GRID_X	(0)
+#define GUI_GRID_Y	(0)
+#define GUI_GRID_W	(0.025)
+#define GUI_GRID_H	(0.04)
+#define GUI_GRID_WAbs	(1)
+#define GUI_GRID_HAbs	(1)
 
 class RscDisplayRenderTest
 {
@@ -38,22 +44,126 @@ class RscDisplayRenderTest
 			colorBackground[]={0,0,1,0.4};
 		};
 		
+		
+		
+		//class MyTextBox: RscEdit
+        //{
+        //    idc = 1400;
+        //    
+        //    // Placed dynamically using Arma 3's GUI Grid
+        //    x = 10 * GUI_GRID_W + GUI_GRID_X;
+        //    y = 12 * GUI_GRID_H + GUI_GRID_Y;
+        //    w = 20 * GUI_GRID_W;
+        //    h = 1.5 * GUI_GRID_H;
+        //    
+        //    text = "Enter text here..."; // Pre-populated text string
+        //};
+		
 		class VideoTest: RscText
 		{
-		type=106;
+		    type=106;
 			idc=1337;
 			x="0";
 			y="0";
 			w="1";
 			h="1";
 			
-			url = "https://www.youtube.com/watch?v=xvFZjo5PgG0&autoplay=1&loop=1";
+			url = "arma://layout.html";
 		};
+
+
 		
 	};
 	
 	onLoad = "GMyData = _this, uiNamespace setVariable ['GMyData', _this]; addMissionEventHandler ['EachFrame', {_disp = _thisArgs#0; displayUpdate _disp;}, [_this#0]];";
 };
+
+class RscDisplayLayout2
+{
+	idd=157;
+	class Controls
+	{
+		class VideoTest: RscText
+		{
+		    type=106;
+			idc=1337;
+			x="0";
+			y="0";
+			w="1";
+			h="1";
+			
+			url = "arma://layout2.html";
+		};
+		
+	};
+	
+	onLoad = "GMyData2 = _this, uiNamespace setVariable ['GMyData2', _this]; addMissionEventHandler ['EachFrame', {_disp = _thisArgs#0; displayUpdate _disp;}, [_this#0]];";
+};
+
+class RscDisplayRef
+{
+	idd=157;
+	class Controls
+	{
+		class VideoTest: RscText
+		{
+		    type=108;
+			idc=1337;
+			x= safeZoneX;
+			y= safeZoneY + 0.5;
+			w= 0.5;
+			h= 0.5;
+		};
+	};
+	
+	onLoad = "_disp = _this#0; _ctrl = _this#0 displayCtrl 1337; _ctrl ctrlWebBrowserAction ['SetBrowserReference', GMyData#0 displayCtrl 1337];";
+};
+
+class RscDisplayRefAlpha
+{
+	idd=157;
+	class Controls
+	{
+		class VideoTest: RscText
+		{
+		    type=108;
+			idc=1337;
+			x = safeZoneX;
+			y = safeZoneY;
+			w = safeZoneW;
+			h = safeZoneH;
+			
+			fade = 0.95;
+		};
+	};
+	
+	onLoad = "_disp = _this#0; _ctrl = _this#0 displayCtrl 1337; _ctrl ctrlWebBrowserAction ['SetBrowserReference', GMyData#0 displayCtrl 1337];";
+};
+
+class RscDisplayRefFlippy
+{
+	idd=157;
+	class Controls
+	{
+		class VideoTest: RscText
+		{
+		    type=108;
+			idc=1337;
+			x= safeZoneX;
+			y= safeZoneY + 0.5;
+			w = 1;
+			h = 1;
+			
+			fade = 0.2;
+		};
+	};
+	
+	onLoad = "addMissionEventHandler ['EachFrame', {_disp = _thisArgs#0; displayUpdate _disp;}, [_this#0]]; _ctrl = _this#0 displayCtrl 1337; _ctrl spawn {while {!isNull _this} do {_this ctrlWebBrowserAction ['SetBrowserReference', GMyData#0 displayCtrl 1337]; uiSleep 0.5; _this ctrlWebBrowserAction ['SetBrowserReference', GMyData2#0 displayCtrl 1337]; uiSleep 0.5;   } };";
+	
+	
+	
+};
+
 
 class PLP_Test
 {
